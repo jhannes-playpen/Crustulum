@@ -60,13 +60,13 @@ public class CakeApplication extends TimerTask {
     }
 
     public static void main(String[] args) throws IOException {
-        String mailhost = System.getProperty("mail.smtp.host");
+        String mailhost = System.getProperty("mail.smtp.host", "localhost");
 
         if (System.getProperty("test.startTime")!=null) {
-            DateTime startTime = DateTimeFormat.forPattern("yyyy/MM/ddTHH:mm").
+            DateTime startTime = DateTimeFormat.forPattern("yyyy/MM/dd'T'HH:mm").
                 parseDateTime(System.getProperty("test.startTime"));
-            DateTimeUtils.setCurrentMillisOffset(System.currentTimeMillis() -
-                    startTime.getMillis());
+            DateTimeUtils.setCurrentMillisOffset(
+                    startTime.getMillis()-System.currentTimeMillis());
 
             System.out.println("Simulating start time " + new DateTime());
         }
@@ -84,7 +84,7 @@ public class CakeApplication extends TimerTask {
 
         TimerTask application = new CakeApplication(cakeDirectory, mailhost);
 
-        new Timer(false).schedule(application, 60*1000, 0);
+        new Timer(false).schedule(application, 0, 60*1000);
     }
 
     private static void copyTo(File inputFile, File outputDir) throws IOException {

@@ -1,5 +1,6 @@
 package no.steria.crustulum;
 
+import static no.steria.crustulum.Weekdays.FRIDAY;
 import static no.steria.crustulum.Weekdays.WEDNESDAY;
 
 import java.util.ArrayList;
@@ -26,8 +27,16 @@ public class CakeApplicationRequest {
         this.lastCakeEvent = lastCakeEvent;
     }
 
-    public DateMidnight getNextCakeEvent() {
-        DateMidnight nextCakeEvent = lastCakeEvent.plusWeeks(1);
+    public DateMidnight getNextCakeEvent(DateMidnight today) {
+        DateMidnight nextCakeEvent;
+        if (lastCakeEvent != null) {
+            nextCakeEvent = lastCakeEvent.plusWeeks(1);
+        } else if (today.getDayOfWeek() < FRIDAY) {
+            nextCakeEvent = today.withDayOfWeek(FRIDAY);
+        } else {
+            nextCakeEvent = today.plusWeeks(1).withDayOfWeek(FRIDAY);
+        }
+
         while (vacations.contains(nextCakeEvent)) {
             nextCakeEvent = nextCakeEvent.plusWeeks(1);
         }
@@ -38,8 +47,8 @@ public class CakeApplicationRequest {
         this.vacations = vacations;
     }
 
-    public DateTime getCakeNotificationTime() {
-        return new DateTime(getNextCakeEvent().withDayOfWeek(WEDNESDAY)).withHourOfDay(14);
+    public DateTime getCakeNotificationTime(DateMidnight today) {
+        return new DateTime(getNextCakeEvent(today).withDayOfWeek(WEDNESDAY)).withHourOfDay(14);
     }
 
     public void setBakerTeams(Collection<BakerTeam> bakerTeams) {
@@ -85,8 +94,8 @@ public class CakeApplicationRequest {
     }
 
     public void run(DateTime now) {
-        if (!now.isBefore(getCakeNotificationTime())) {
-            notifyNextTeam(getNextBakerTeam(), getNextCakeEvent());
+        if (!now.isBefore(getCakeNotificationTime(now.toDateMidnight()))) {
+            notifyNextTeam(getNextBakerTeam(), getNextCakeEvent(now.toDateMidnight()));
         }
     }
 

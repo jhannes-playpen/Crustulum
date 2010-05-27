@@ -25,7 +25,7 @@ public class CakeApplication {
         this.emailSender = emailSender;
     }
 
-    public void run(DateTime now) {
+    public void run() {
         CakeApplicationRequest request = new CakeApplicationRequest();
         request.setBakerRepository(bakerRepository);
         request.setCakeEventRepository(eventRepository);
@@ -35,7 +35,7 @@ public class CakeApplication {
         request.setLastCakeEvent(eventRepository.getLastCakeEvent());
         request.setVacations(vacationRepository.getVacations());
 
-        request.run(now);
+        request.run(new DateTime());
     }
 
 }

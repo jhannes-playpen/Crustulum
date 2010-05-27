@@ -23,9 +23,24 @@ public class CakeApplicationRequestTest {
     private CakeApplicationRequest request = new CakeApplicationRequest();
 
     @Test
+    public void shouldFindFirstCakeEvent() throws Exception {
+        request.setLastCakeEvent(null);
+        assertThat(request.getNextCakeEvent(today))
+            .isEqualTo(today.withDayOfWeek(FRIDAY));
+    }
+
+    @Test
+    public void shouldFindFirstCakeEventWhenStartedAfterFriday() throws Exception {
+        request.setLastCakeEvent(null);
+        assertThat(request.getNextCakeEvent(today.withDayOfWeek(FRIDAY)))
+            .isEqualTo(today.plusWeeks(1).withDayOfWeek(FRIDAY));
+    }
+
+    @Test
     public void shouldFindNextCakeEventWhenNoVacations() throws Exception {
         request.setLastCakeEvent(today.minusWeeks(1).withDayOfWeek(FRIDAY));
-        assertThat(request.getNextCakeEvent()).isEqualTo(today.withDayOfWeek(FRIDAY));
+        assertThat(request.getNextCakeEvent(today))
+            .isEqualTo(today.withDayOfWeek(FRIDAY));
     }
 
     @Test
@@ -33,13 +48,14 @@ public class CakeApplicationRequestTest {
         request.setLastCakeEvent(today.minusWeeks(1).withDayOfWeek(FRIDAY));
         request.setVacations(Arrays.asList(today.withDayOfWeek(FRIDAY), today.withDayOfWeek(FRIDAY).plusWeeks(1)));
 
-        assertThat(request.getNextCakeEvent()).isEqualTo(today.plusWeeks(2).withDayOfWeek(FRIDAY));
+        assertThat(request.getNextCakeEvent(today))
+            .isEqualTo(today.plusWeeks(2).withDayOfWeek(FRIDAY));
     }
 
     @Test
     public void shouldFindNotificationTime() throws Exception {
         request.setLastCakeEvent(today.minusWeeks(1).withDayOfWeek(FRIDAY));
-        assertThat(request.getCakeNotificationTime())
+        assertThat(request.getCakeNotificationTime(today))
             .isEqualTo(new DateTime(today.withDayOfWeek(WEDNESDAY)).withHourOfDay(14).withMinuteOfHour(0));
     }
 

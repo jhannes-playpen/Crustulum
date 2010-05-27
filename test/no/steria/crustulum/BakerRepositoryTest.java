@@ -75,4 +75,9 @@ public class BakerRepositoryTest {
         assertThat(team.getTeamEmail()).isEqualTo(reconstitutedTeam.getTeamEmail());
         assertThat(team.getLastBaked()).isEqualTo(reconstitutedTeam.getLastBaked());
     }
+
+    @Test
+    public void shouldReturnEmptyListForEmptyFile() throws Exception {
+        assertThat(bakerRepository.getAllTeams()).isEmpty();
+    }
 }

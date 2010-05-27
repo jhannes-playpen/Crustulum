@@ -11,6 +11,7 @@ import javax.mail.Message.RecipientType;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,7 +53,8 @@ public class CakeApplicationTest {
         cakeApplication.setEmailSender(emailSender);
 
         DateTime eventNotificationTime = new DateTime(today).withHourOfDay(14).withMinuteOfHour(0);
-        cakeApplication.run(eventNotificationTime);
+        DateTimeUtils.setCurrentMillisFixed(eventNotificationTime.getMillis());
+        cakeApplication.run();
 
 
         DateMidnight nextCakeEvent = today.withDayOfWeek(FRIDAY);
@@ -69,7 +71,7 @@ public class CakeApplicationTest {
 
         emailSender = new FakeEmailSender();
         cakeApplication.setEmailSender(emailSender);
-        cakeApplication.run(eventNotificationTime);
+        cakeApplication.run();
         assertThat(emailSender.getMessage()).isNull();
     }
 

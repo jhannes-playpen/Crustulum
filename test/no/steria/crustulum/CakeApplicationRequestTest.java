@@ -1,6 +1,7 @@
 package no.steria.crustulum;
 
 import static no.steria.crustulum.Weekdays.FRIDAY;
+import static no.steria.crustulum.Weekdays.SATURDAY;
 import static no.steria.crustulum.Weekdays.THURSDAY;
 import static no.steria.crustulum.Weekdays.WEDNESDAY;
 import static org.fest.assertions.Assertions.assertThat;
@@ -24,6 +25,16 @@ public class CakeApplicationRequestTest {
     private CakeApplicationRequest request = new CakeApplicationRequest();
 
     @Test
+    public void shouldFindNextFriday() throws Exception {
+        assertThat(request.nextFridayAfter(today))
+            .isEqualTo(today.withDayOfWeek(FRIDAY));
+        assertThat(request.nextFridayAfter(today.withDayOfWeek(SATURDAY)))
+            .isEqualTo(today.plusWeeks(1).withDayOfWeek(FRIDAY));
+        assertThat(request.nextFridayAfter(today.withDayOfWeek(FRIDAY)))
+            .isEqualTo(today.plusWeeks(1).withDayOfWeek(FRIDAY));
+    }
+
+    @Test
     public void shouldFindFirstCakeEvent() throws Exception {
         request.setLastCakeEvent(null);
         assertThat(request.getNextCakeEvent(today))
@@ -42,6 +53,19 @@ public class CakeApplicationRequestTest {
         request.setLastCakeEvent(today.minusWeeks(1).withDayOfWeek(FRIDAY));
         assertThat(request.getNextCakeEvent(today))
             .isEqualTo(today.withDayOfWeek(FRIDAY));
+    }
+
+    @Test
+    public void shouldNeverPickDateBeforeToday() throws Exception {
+        request.setLastCakeEvent(today.minusWeeks(2).withDayOfWeek(FRIDAY));
+        assertThat(request.getNextCakeEvent(today))
+            .isEqualTo(today.withDayOfWeek(FRIDAY));
+    }
+
+    @Test
+    public void shouldPickNextFridayEvenIfLastEventWasAnotherDay() throws Exception {
+        request.setLastCakeEvent(today.withDayOfWeek(THURSDAY));
+        assertThat(request.getNextCakeEvent(today).getDayOfWeek()).isEqualTo(FRIDAY);
     }
 
     @Test

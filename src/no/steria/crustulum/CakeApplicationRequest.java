@@ -28,13 +28,13 @@ public class CakeApplicationRequest {
     }
 
     public DateMidnight getNextCakeEvent(DateMidnight today) {
-        DateMidnight nextCakeEvent;
+        DateMidnight nextCakeEvent = null;
         if (lastCakeEvent != null) {
-            nextCakeEvent = lastCakeEvent.plusWeeks(1);
-        } else if (today.getDayOfWeek() < FRIDAY) {
-            nextCakeEvent = today.withDayOfWeek(FRIDAY);
-        } else {
-            nextCakeEvent = today.plusWeeks(1).withDayOfWeek(FRIDAY);
+            nextCakeEvent = nextFridayAfter(lastCakeEvent);
+        }
+
+        if (nextCakeEvent == null || nextCakeEvent.isBefore(today)) {
+            nextCakeEvent = nextFridayAfter(today);
         }
 
         while (vacations.contains(nextCakeEvent)) {
@@ -101,6 +101,13 @@ public class CakeApplicationRequest {
         if (!now.isBefore(getCakeNotificationTime(now.toDateMidnight()))) {
             notifyNextTeam(getNextBakerTeam(), getNextCakeEvent(now.toDateMidnight()));
         }
+    }
+
+    public DateMidnight nextFridayAfter(DateMidnight today) {
+        return today.getDayOfWeek() < FRIDAY
+            ? today.withDayOfWeek(FRIDAY)
+            : today.plusWeeks(1).withDayOfWeek(FRIDAY);
+
     }
 
 }

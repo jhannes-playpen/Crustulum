@@ -7,6 +7,7 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.mail.Message.RecipientType;
@@ -80,11 +81,26 @@ public class CakeApplicationRequestTest {
     }
 
     @Test
+    public void shouldReturnNullWhenNoTeams() throws Exception {
+        request.setBakerTeams(new ArrayList<BakerTeam>());
+        assertThat(request.getNextBakerTeam()).isNull();
+    }
+
+    @Test
     public void shouldUpdateLastBakeTime() throws Exception {
         CakeEventRepository mockCakeEventRepository = mock(CakeEventRepository.class);
         request.setCakeEventRepository(mockCakeEventRepository);
 
         request.notifyNextTeam(new BakerTeam("A", "jhannes+a@gmail.com"), today);
+        verify(mockCakeEventRepository).setLastCakeEvent(today);
+    }
+
+    @Test
+    public void shouldSkipEventWhenNoBakers() throws Exception {
+        CakeEventRepository mockCakeEventRepository = mock(CakeEventRepository.class);
+        request.setCakeEventRepository(mockCakeEventRepository);
+
+        request.notifyNextTeam(null, today);
         verify(mockCakeEventRepository).setLastCakeEvent(today);
     }
 

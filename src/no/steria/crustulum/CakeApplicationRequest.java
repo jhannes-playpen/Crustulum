@@ -56,6 +56,8 @@ public class CakeApplicationRequest {
     }
 
     public BakerTeam getNextBakerTeam() {
+        if (bakerTeams.isEmpty()) return null;
+
         BakerTeam nextTeam = bakerTeams.iterator().next();
         for (BakerTeam team : bakerTeams) {
             if (team.getLastBaked().isBefore(nextTeam.getLastBaked())) {
@@ -70,19 +72,21 @@ public class CakeApplicationRequest {
     }
 
     public void notifyNextTeam(BakerTeam nextTeam, DateMidnight nextCakeEvent) {
-        MimeMessage message = emailSender.createMessage();
-        try {
-            message.setRecipients(RecipientType.TO, nextTeam.getTeamEmail());
-            message.setSubject("Get ready to bake a cake on " + nextCakeEvent);
-            message.setText("");
-        } catch (MessagingException e) {
-            throw new RuntimeException("Illegal team email for " + nextTeam);
-        }
-        emailSender.sendMessage(message);
+        if (nextTeam != null) {
+            MimeMessage message = emailSender.createMessage();
+            try {
+                message.setRecipients(RecipientType.TO, nextTeam.getTeamEmail());
+                message.setSubject("Get ready to bake a cake on " + nextCakeEvent);
+                message.setText("");
+            } catch (MessagingException e) {
+                throw new RuntimeException("Illegal team email for " + nextTeam);
+            }
+            emailSender.sendMessage(message);
 
-        nextTeam.setLastBaked(nextCakeEvent);
+            nextTeam.setLastBaked(nextCakeEvent);
+            bakerRepository.updateTeam(nextTeam);
+        }
         cakeEventRepository.setLastCakeEvent(nextCakeEvent);
-        bakerRepository.updateTeam(nextTeam);
     }
 
     public void setBakerRepository(BakerRepository bakerRepository) {

@@ -17,12 +17,14 @@ import org.junit.Test;
 public class CakeApplicationTest {
 
     private File bakerFile = new File("bin/bakers-" + getClass().getName() + ".csv");
-    private File vacationFile = new File("bin/vacations-" + getClass().getName() + ".test");
+    private File vacationFile = new File("bin/vacations-" + getClass().getName() + ".txt");
+    private File eventFile = new File("bin/events-" + getClass().getName() + ".txt");
 
     @Before
     public void deletePreviousRuns() {
         bakerFile.delete();
         vacationFile.delete();
+        eventFile.delete();
     }
 
     @Test
@@ -42,7 +44,7 @@ public class CakeApplicationTest {
         vacationRepository.addVacationWeek(today.minusWeeks(1).withDayOfWeek(FRIDAY));
         cakeApplication.setVacationRepository(vacationRepository);
 
-        CakeEventRepository eventRepository = new FakeCakeEventRepository();
+        CakeEventRepository eventRepository = new CakeEventRepository(eventFile);
         eventRepository.setLastCakeEvent(today.minusWeeks(2).withDayOfWeek(FRIDAY));
         cakeApplication.setEventRepository(eventRepository);
 

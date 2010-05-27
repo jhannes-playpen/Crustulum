@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 public abstract class FileRepository<T> {
 
     private final File file;
@@ -17,6 +20,8 @@ public abstract class FileRepository<T> {
     public FileRepository(File file) {
         this.file = file;
     }
+
+    protected DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("yyyy/MM/dd");
 
     protected void writeContents(Collection<T> items) {
         try {

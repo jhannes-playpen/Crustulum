@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 public class BakerRepository extends FileRepository<BakerTeam> {
 
@@ -43,8 +41,6 @@ public class BakerRepository extends FileRepository<BakerTeam> {
         }
         writeContents(allTeams);
     }
-
-    private DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("yyyy/MM/dd");
 
     @Override
     public BakerTeam readLine(String teamLine) {

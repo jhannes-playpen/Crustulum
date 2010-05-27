@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import org.joda.time.DateMidnight;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 public class VacationRepository extends FileRepository<DateMidnight> {
 
@@ -22,8 +20,6 @@ public class VacationRepository extends FileRepository<DateMidnight> {
     public List<DateMidnight> getVacations() {
         return readItems();
     }
-
-    private DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("yyyy/MM/dd");
 
     @Override
     protected String writeItem(DateMidnight item) {

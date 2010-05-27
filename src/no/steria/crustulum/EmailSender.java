@@ -11,8 +11,6 @@ public class EmailSender {
 
     private Properties props = new Properties();
 
-
-
     public MimeMessage createMessage() {
         Session session = Session.getDefaultInstance(props);
         return new MimeMessage(session);

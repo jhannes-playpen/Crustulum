@@ -17,10 +17,12 @@ import org.junit.Test;
 public class CakeApplicationTest {
 
     private File bakerFile = new File("bin/bakers-" + getClass().getName() + ".csv");
+    private File vacationFile = new File("bin/vacations-" + getClass().getName() + ".test");
 
     @Before
     public void deletePreviousRuns() {
         bakerFile.delete();
+        vacationFile.delete();
     }
 
     @Test
@@ -36,7 +38,7 @@ public class CakeApplicationTest {
         bakerRepository.addTeam(new BakerTeam("The Old Team", "jhannes+test3@gmail.com", new DateMidnight(2008, 10, 1)));
         cakeApplication.setBakerRepository(bakerRepository);
 
-        VacationRepository vacationRepository = new FakeVacationRepository();
+        VacationRepository vacationRepository = new VacationRepository(vacationFile);
         vacationRepository.addVacationWeek(today.minusWeeks(1).withDayOfWeek(FRIDAY));
         cakeApplication.setVacationRepository(vacationRepository);
 

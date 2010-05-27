@@ -59,7 +59,7 @@ public class BakerRepositoryTest {
 
     @Test
     public void shouldReadTeamLine() throws Exception {
-        BakerTeam team = bakerRepository.readTeamLine("team a; jhannes+a@gmail.com, jhannes+b@gmail.com  ;2010/11/20");
+        BakerTeam team = bakerRepository.readLine("team a; jhannes+a@gmail.com, jhannes+b@gmail.com  ;2010/11/20");
         assertThat(team.getTeamName()).isEqualTo("team a");
         assertThat(team.getTeamEmail()).isEqualTo("jhannes+a@gmail.com, jhannes+b@gmail.com");
         assertThat(team.getLastBaked()).isEqualTo(new DateMidnight(2010, 11, 20));
@@ -68,9 +68,9 @@ public class BakerRepositoryTest {
     @Test
     public void shouldWriteTeamLine() throws Exception {
         BakerTeam team = new BakerTeam("team a", "jhannes+b@gmail.com, jhannes+c@gmail.com", new DateMidnight(2010, 1, 13));
-        String teamLine = bakerRepository.writeLine(team);
+        String teamLine = bakerRepository.writeItem(team);
 
-        BakerTeam reconstitutedTeam = bakerRepository.readTeamLine(teamLine);
+        BakerTeam reconstitutedTeam = bakerRepository.readLine(teamLine);
         assertThat(team.getTeamName()).isEqualTo(reconstitutedTeam.getTeamName());
         assertThat(team.getTeamEmail()).isEqualTo(reconstitutedTeam.getTeamEmail());
         assertThat(team.getLastBaked()).isEqualTo(reconstitutedTeam.getLastBaked());

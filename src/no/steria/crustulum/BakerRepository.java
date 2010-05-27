@@ -1,47 +1,27 @@
 package no.steria.crustulum;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
-public class BakerRepository {
-
-    private File file;
+public class BakerRepository extends FileRepository<BakerTeam> {
 
     public BakerRepository(File file) {
-        this.file = file;
+        super(file);
     }
 
     public void addTeam(BakerTeam bakerTeam) {
         Collection<BakerTeam> allTeams = getAllTeams();
         allTeams.add(bakerTeam);
-        writeTeams(allTeams);
+        writeContents(allTeams);
     }
 
     public Collection<BakerTeam> getAllTeams() {
-        Collection<BakerTeam> result = new ArrayList<BakerTeam>();
-        if (!file.exists()) return result;
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                result.add(readTeamLine(line));
-            }
-            reader.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return result;
+        return readItems();
     }
 
     public BakerTeam getTeamByName(String teamName) {
@@ -61,32 +41,23 @@ public class BakerRepository {
                 break;
             }
         }
-        writeTeams(allTeams);
+        writeContents(allTeams);
     }
 
-    private void writeTeams(Collection<BakerTeam> allTeams) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            for (BakerTeam team : allTeams) {
-                writer.write(writeLine(team));
-                writer.write("\n");
-            }
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("yyyy/MM/dd");
 
-    public BakerTeam readTeamLine(String teamLine) {
+    @Override
+    public BakerTeam readLine(String teamLine) {
         String[] teamValues = teamLine.split(";");
         String teamName = teamValues[0].trim();
         String teamEmail = teamValues[1].trim();
-        DateMidnight lastBaked = DateTimeFormat.forPattern("yyyy/MM/dd").parseDateTime(teamValues[2].trim()).toDateMidnight();
+        DateMidnight lastBaked = dateTimeFormat.parseDateTime(teamValues[2].trim()).toDateMidnight();
         return new BakerTeam(teamName, teamEmail, lastBaked);
     }
 
-    public String writeLine(BakerTeam team) {
-        String lastBakedTime = DateTimeFormat.forPattern("yyyy/MM/dd").print(team.getLastBaked());
+    @Override
+    public String writeItem(BakerTeam team) {
+        String lastBakedTime = dateTimeFormat.print(team.getLastBaked());
         return team.getTeamName() + ";" + team.getTeamEmail() + ";" + lastBakedTime;
     }
 
